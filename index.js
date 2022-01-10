@@ -15,8 +15,6 @@ app.use('/auth',authController)
 
 
 
-
-
 app.listen(8000,()=>{
     console.log("The server is up");
 })
