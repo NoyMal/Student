@@ -1,0 +1,67 @@
+<html>
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground5.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body onload="loadData()">
+
+    <div class="student-box">
+        <form>
+            <h4 id="StudentWelcomeSessionStorage"></h4>
+            <h1>Student Page</h1>
+
+            <h3>Full Name :</h3>
+            <p id="FullName"></p>
+            <h3>Email :</h3>
+            <p id="Email"></p>
+            <h3>Faculty :</h3>
+            <p id="Faculty"></p>
+            <h3> Birth Date :</h3>
+            <p id="BirthDate"></p>
+
+            <input type="button" id="StudentBackabautton" value="Back" onclick="BackToMain()">
+
+        </form>
+    </div>
+
+    <script>
+
+        var loadData = async () => {
+            var id = sessionStorage.getItem("id")
+            var resp = await fetch(`http://localhost:8000/students/${id}`)
+            if (resp.ok == true) {
+                var students = await resp.json()
+                var StudentWelcomeSessionStorage = document.getElementById("StudentWelcomeSessionStorage")
+                StudentWelcomeSessionStorage.innerHTML = "Welcome " + students.FullName + " , we missed you !"
+                document.getElementById("FullName").innerHTML = students.FullName
+                document.getElementById("Email").innerHTML = students.Email
+                document.getElementById("Faculty").innerHTML = students.Faculty
+                document.getElementById("BirthDate").innerHTML = students.BirthDate
+
+            }
+
+        }
+
+        var BackToMain = (() => {
+            window.location.href = (`main.html`)
+        })
+
+
+    </script>
+</body>
+
+</html>

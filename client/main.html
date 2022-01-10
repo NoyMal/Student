@@ -1,0 +1,132 @@
+<html>
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground9.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+
+<body onload="getAllStudents()">
+
+    <div class="main-box">
+
+        <table border="1" id="tbl">
+            <tr>
+                <td id="fullName">Full Name</td>
+                <td id="faculty">Faculty</td>
+                <td id="grades">Grades</td>
+                <td id="edit">Edit</td>
+                <td id="delete">Delete</td>
+            </tr>
+        </table><br><br>
+
+
+        <input type="button" id="newStudentButton" value="Add Student" onclick="newStudent()">
+    </div>
+
+    <script>
+
+        var getAllStudents = async () => {
+            var tableObj = document.getElementById("tbl")
+            var resp = await fetch(`http://localhost:8000/students`)
+            if (resp.ok == true) {
+                var students = await resp.json()
+
+                students.forEach(stu => {
+                    var trObj = document.createElement("tr")
+
+                    var tdFullName = document.createElement("td")
+                    var tdFullNameButton = document.createElement("input")
+                    tdFullNameButton.type = "button"
+                    tdFullNameButton.value = stu.FullName
+                    tdFullNameButton.onclick = (() => {
+                        getStudentData(stu._id)
+                    })
+
+                    var tdFaculty = document.createElement("td")
+                    tdFaculty.innerHTML = stu.Faculty
+
+                    var tdGrades = document.createElement("td")
+                    var tdGradesButton = document.createElement("input")
+                    tdGradesButton.type = "button"
+                    tdGradesButton.value = "Show Grades"
+                    tdGradesButton.onclick = (() => {
+                        getStudentGrades(stu._id)
+                    })
+
+                    var tdEdit = document.createElement("td")
+                    var tdEditButton = document.createElement("input")
+                    tdEditButton.type = "button"
+                    tdEditButton.value = "Edit"
+                    tdEditButton.onclick = (() => {
+                        updateStudent(stu._id)
+                    })
+
+                    var tdDelete = document.createElement("td")
+                    var tdDeleteButton = document.createElement("input")
+                    tdDeleteButton.type = "button"
+                    tdDeleteButton.value = "Delete"
+                    tdDeleteButton.onclick = (() => {
+                        deleteStudent(stu._id)
+                    })
+
+                    tdEdit.appendChild(tdEditButton)
+                    tdDelete.appendChild(tdDeleteButton)
+                    tdGrades.appendChild(tdGradesButton)
+                    tdFullName.appendChild(tdFullNameButton)
+                    trObj.append(tdFullName, tdFaculty, tdGrades, tdEdit, tdDelete)
+
+
+                    tableObj.appendChild(trObj)
+
+                });
+            }
+        }
+
+
+        var updateStudent = ((id) => {
+            sessionStorage.setItem("id", id)
+            window.location.href = (`editStudent.html`)
+        })
+
+        var getStudentData = ((id) => {
+            sessionStorage.setItem("id", id)
+            window.location.href = (`student.html`)
+        })
+
+        var deleteStudent = ((id) => {
+            sessionStorage.setItem("id", id)
+            var fetchParams = {
+                method: 'delete'
+            }
+            fetch(`http://localhost:8000/students/${id}`, fetchParams)
+            alert("Student was deleted successfully !")
+            window.location.href = (`main.html`)
+        })
+
+        var getStudentGrades = ((id) => {
+            sessionStorage.setItem("id", id)
+            window.location.href = (`studentGrades.html`)
+        })
+
+        var newStudent = (() => {
+            window.location.href = (`addStudent.html`)
+        })
+
+
+    </script>
+</body>
+
+</html>

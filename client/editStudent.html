@@ -1,0 +1,80 @@
+<html>
+
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body onload="loadData()">
+    <div id="EditStudentForm">
+        <form>
+            <h1> Update Student </h1>
+            <h3>Full Name :</h3>
+            <input type="text" id="FullName"></br><br>
+            <h3>Email :</h3>
+            <input type="text" id="Email"></br><br>
+            <h3>Faculty :</h3>
+            <input type="text" id="Faculty"></br><br>
+            <h3> Birth Date :</h3>
+            <input type="text" id="BirthDate"></br></br></br>
+
+            <input type="button" value="submit" onclick="updateData()">
+
+        </form>
+    </div>
+    <script>
+
+
+        var loadData = async () => {
+            var id = sessionStorage.getItem("id")
+            var resp = await fetch(`http://localhost:8000/students/${id}`)
+
+            if (resp.ok == true) {
+                var students = await resp.json()
+                document.getElementById("FullName").value = students.FullName
+                document.getElementById("Email").value = students.Email
+                document.getElementById("Faculty").value = students.Faculty
+                document.getElementById("BirthDate").value = students.BirthDate
+            }
+        }
+
+
+        var updateData = () => {
+            var id = sessionStorage.getItem("id")
+            var updateObj = {
+                FullName: document.getElementById("FullName").value,
+                Email: document.getElementById("Email").value,
+                Faculty: document.getElementById("Faculty").value,
+                BirthDate: document.getElementById("BirthDate").value
+
+            }
+            var fetchParams = {
+                method: 'put',
+                body: JSON.stringify(updateObj),
+                headers: { "Content-type": "application/json" }
+            }
+            fetch(`http://localhost:8000/students/${id}`, fetchParams)
+            alert("The student was updated successfully !")
+            window.location.href = (`main.html`)
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>

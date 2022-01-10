@@ -1,0 +1,64 @@
+<html>
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground2.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <h1>Add Student:</h1>
+        <h3>Full Name :</h3>
+        <input type="text" id="FullName"></input></br></br>
+        <h3>Email :</h3>
+        <input type="text" id="Email"></input></br></br>
+        <h3>Faculty :</h3>
+        <input type="text" id="Faculty"></input></br></br>
+        <h3> Birth Date :</h3>
+        <input type="text" id="BirthDate"></input></br></br></br></br>
+
+        <input type="button" value="Add Student" onclick="addStudent()">
+    </form>
+
+    <script>
+
+        var addStudent = () => {
+            var newStudent = {
+                FullName: document.getElementById("FullName").value,
+                Email: document.getElementById("Email").value,
+                Faculty: document.getElementById("Faculty").value,
+                BirthDate: document.getElementById("BirthDate").value,
+                Grades:
+                    [{
+                        Grade: "",
+                        Date: ""
+                    }]
+            }
+
+            var fetchParams = {
+                method: 'post',
+                body: JSON.stringify(newStudent),
+                headers: { "Content-type": "application/json" }
+            }
+
+            fetch("http://localhost:8000/students", fetchParams)
+            alert("The student was created successfully !")
+            window.location.href = (`main.html`)
+        }
+
+    </script>
+</body>
+
+</html>

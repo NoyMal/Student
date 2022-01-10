@@ -1,0 +1,62 @@
+<html>
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground10.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <form>
+        <h1 class="loginPage"> Login Page </h1>
+        <h3>Full Name :</h3>
+        <input type="text" id="UserName" placeholder="Enter user name"></br><br>
+        <h3>Email :</h3>
+        <input type="text" id="Email" placeholder="Enter email"></br><br><br><br>
+
+        <input type="button" id="loginButton" value="Login" onclick="loginUser()">
+
+    </form>
+    <script>
+
+        var loginUser = async () => {
+            var username = document.getElementById('UserName').value
+            var checkUser = {
+                username: username,
+                email: document.getElementById('Email').value
+            }
+            var fetchParams = {
+                method: "post",
+                body: JSON.stringify(checkUser),
+                headers: { "content-type": "application/json" }
+            }
+            var resp = await fetch("http://localhost:8000/auth", fetchParams)
+            if (resp.ok) {
+                var isLogin = await resp.json()
+                if (isLogin) {
+                    sessionStorage.setItem('username', username)
+                    window.location.href = "main.html"
+                }
+                else {
+                    alert("Wrong user name or email")
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,151 @@
+<html>
+
+<head runat="server">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('../Photos/studentBackground8.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body onload="getAllGrades()">
+
+    <div class="grade-box">
+        <br>
+        <h4 id="WelcomeSessionStorage"></h4>
+        <h1>Your Achievements : </h1>
+
+        <table border="1" id="tbl">
+            <tr>
+                <td id="examNumHeader"> Exam Number</td>
+                <td id="Grade"> Grade </td>
+                <td id="Date">Exam Date</td>
+            </tr>
+        </table>
+        </br>
+        <table id="notARealTbl">
+            <tr>
+                <td id="tdAddGrade">
+                    <!-- Add new Grade -->
+                    <h3 id="AddH3"> Add New Exam </h3>
+                    <input type="text" placeholder="Enter New Grade" id="newGrade"></br></br>
+                    <input type="text" placeholder="Enter Exam Date" id="examDate"></br></br></br>
+                    <input type="button" value="Add" id="Add" onclick="addGrade()"></br>
+                </td>
+
+                <td id="tdUpdateGrade">
+                    <!-- Update exist Grade -->
+                    <h3 id="UpdateH3"> Update Exam </h3>
+                    <input type="number" min="1" placeholder="Enter Exam Number" id="examNum"></br></br>
+                    <input type="text" placeholder="Enter Updated Grade" id="updatedGrade"></br></br></br>
+                    <input type="button" value="Update" id="Update" onclick="updateGrade()"></br>
+                </td>
+            </tr>
+        </table>
+        </br></br></br>
+        <input type="button" id="backabautton" value="Back" onclick="BackToMain()">
+
+    </div>
+
+    <script>
+
+        var getAllGrades = async () => {
+            var counter = 0;
+            var id = sessionStorage.getItem("id")
+            var tableObj = document.getElementById("tbl")
+            var resp = await fetch(`http://localhost:8000/students/${id}`)
+            if (resp.ok == true) {
+                var student = await resp.json()
+                var WelcomeSessionStorage = document.getElementById("WelcomeSessionStorage")
+                WelcomeSessionStorage.innerHTML = "Welcome " + student.FullName + " , "
+                student.Grades.forEach(tempGrade => {
+
+                    counter++;
+
+                    var trObj = document.createElement("tr")
+
+                    var tdExamNum = document.createElement("td")
+                    tdExamNum.innerHTML = counter
+
+                    var tdGrade = document.createElement("td")
+                    tdGrade.innerHTML = tempGrade.Grade
+
+                    var examDate = document.createElement("td")
+                    examDate.innerHTML = tempGrade.Date
+
+                    trObj.append(tdExamNum, tdGrade, examDate)
+
+                    tableObj.appendChild(trObj)
+
+                });
+            }
+        }
+
+
+
+        var updateGrade = async () => {
+            var id = sessionStorage.getItem("id")
+            var resp = await fetch(`http://localhost:8000/students/${id}`)
+            if (resp.ok == true) {
+                var currentStudent = await resp.json()
+                currentStudent.Grades[document.getElementById("examNum").value - 1].Grade = document.getElementById("updatedGrade").value
+            }
+            var updateObj = {
+                Date: currentStudent.Grades.Date,
+                Grade: document.getElementById("Grade")
+            }
+
+            var fetchParams = {
+                method: 'put',
+                body: JSON.stringify(currentStudent),
+                headers: { "Content-type": "application/json" }
+            }
+            fetch(`http://localhost:8000/students/${id}`, fetchParams)
+            alert("The grade was updated successfully !")
+            window.location.href = (`studentGrades.html`)
+        }
+
+
+        var addGrade = async () => {
+
+            var id = sessionStorage.getItem("id")
+            var resp = await fetch(`http://localhost:8000/students/${id}`)
+
+            var newGrade = {
+                Date: document.getElementById("examDate").value,
+                Grade: document.getElementById("newGrade").value
+            }
+
+            if (resp.ok == true) {
+                var student = await resp.json()
+                student.Grades.push(newGrade)
+            }
+
+            var fetchParams = {
+                method: 'put',
+                body: JSON.stringify(student),
+                headers: { "Content-type": "application/json" }
+            }
+
+            fetch(`http://localhost:8000/students/${id}`, fetchParams)
+            alert("The exam was created successfully !")
+            window.location.href = (`studentGrades.html`)
+        }
+
+        var BackToMain = (() => {
+            window.location.href = (`main.html`)
+        })
+
+    </script>
+</body>
+
+</html>
